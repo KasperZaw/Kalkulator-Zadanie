@@ -74,11 +74,15 @@ function* lexer(str) {
         return null
     }
 
-    for (; cursor <= str.length; ) { // sprawdzic
+    for (;; ) { // sprawdzic
         const token = number() || eof() || null;
 
         if(token) {
             yield token;
+
+            if(token.type === 'EOF') {
+                break;
+            }
         } else {
             throw new SyntaxError(
                 `unexpected character ${char} at ${cursor + 1}`
