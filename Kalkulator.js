@@ -38,77 +38,80 @@ console.log("finish");
 const input = "123456789  22  33";
 
 function* lexer(str) {
-    let cursor = 0;
-    let char = str[cursor];
+  let cursor = 0;
+  let char = str[cursor];
 
-    function next() {
-        cursor++;
-        char = str[cursor];
+  function next() {
+    cursor++;
+    char = str[cursor];
+  }
+
+  function number() {
+    let buffer = "";
+    while (
+      char === "0" ||
+      char === "1" ||
+      char === "2" ||
+      char === "3" ||
+      char === "4" ||
+      char === "5" ||
+      char === "6" ||
+      char === "7" ||
+      char === "8" ||
+      char === "9"
+    ) {
+      buffer += char;
+      next();
     }
 
-    function number() {
-        let buffer = "";
-        while (/^\d$/.test(char)) {
-            buffer += char;
-            next()
-        }
-     
-        if(buffer.length >= 1) {
-            return {
-                type: 'number',
-                value: buffer,
-            }
-        }
-
-        return null;
+    if (buffer.length >= 1) {
+      return {
+        type: "number",
+        value: buffer,
+      };
     }
 
-    function whitespace() {
-        let buffer = ""
-        while(char === " ") {
-            buffer += char;
-            next()
-        }
-        if(buffer.length >= 1) {
-            return {
-                type: "whitespace",
-                value: buffer,
-            }
-        }
+    return null;
+  }
+
+  function whitespace() {
+    while (char === " " || char === "/t") {
+     next();
+    }
+  }
+
+  function eof() {
+    char = str[cursor];
+    cursor++;
+    if (char === undefined) {
+      return {
+        type: "EOF",
+      };
     }
 
-    function eof() {
-        char = str[cursor]
-        cursor++
-        if (char === undefined) {
-            return { 
-                type: "EOF" 
-            };
-        }
+    return null;
+  }
 
-        return null
+  for (;;) {
+    // sprawdzic this is równowartość to this while(true)
+    whitespace()
+    const token = number() || eof(); // features are arranged by frequency of use
+
+    if (token) {
+      yield token;
+
+      if (token.type === "EOF") {
+        break;
+      }
+    } else {
+      throw new SyntaxError(`unexpected character ${char} at ${cursor + 1}`);
     }
-
-    for (;; ) { // sprawdzic this is równowartość to this while(true)
-        const token = number() || whitespace() || eof(); // features are arranged by frequency of use
-
-        if(token) {
-            yield token;
-
-            if(token.type === 'EOF') {
-                break;
-            }
-        } else {
-            throw new SyntaxError(
-                `unexpected character ${char} at ${cursor + 1}`
-            )
-        }
-    }
+  }
 }
 
 console.log("start");
-for (const token of lexer(input)) { // console.log([...lexer(input)])
-    console.log(token);
-  }
+for (const token of lexer(input)) {
+  // console.log([...lexer(input)])
+  console.log(token);
+}
 console.log("finish");
-
