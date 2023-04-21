@@ -3,7 +3,8 @@
 // * after function make function a genarator
 // The yield keyword is used to define a generator function, which is a special kind of function that can be used to produce a sequence of values on demand..
 // !!! note for me to final project str.split('')[0].match(/sadasd/) <- regular expresion
-const input = "77877";
+/*
+const input = "777";
 
 function* lexer(str) {
   // looping through string and tracking current position in string
@@ -33,3 +34,62 @@ for (const token of lexer(input)) {
 }
 
 console.log("finish");
+*/
+const input = "777";
+
+function* lexer(str) {
+    let cursor = 0;
+    let char = undefined;
+
+    function number() {
+        let value = "";
+        for (; cursor <= str.length; cursor++) {
+            char = str[cursor]
+            if(char === '7') { // if character is 7 we save it to the value
+                value += char;
+            } else {
+                break;
+            }
+        }
+     
+        if(value.length >= 1) {
+            return {
+                type: 'number',
+                value,
+            }
+        }
+
+        return null;
+    }
+
+    function eof() {
+        char = str[cursor]
+        cursor++
+        if (char === undefined) {
+            return { 
+                type: "EOF" 
+            };
+        }
+
+        return null
+    }
+
+    for (; cursor <= str.length; ) { // sprawdzic
+        const token = number() || eof() || null;
+
+        if(token) {
+            yield token;
+        } else {
+            throw new SyntaxError(
+                `unexpected character ${char} at ${cursor + 1}`
+            )
+        }
+    }
+}
+
+console.log("start");
+for (const token of lexer(input)) {
+    console.log(token);
+  }
+console.log("finish");
+
