@@ -3,7 +3,7 @@
 // * after function make function a genarator
 // The yield keyword is used to define a generator function, which is a special kind of function that can be used to produce a sequence of values on demand..
 // !!! note for me to final project str.split('')[0].match(/sadasd/) <- regular expresion
-const input = "7777";
+const input = "77877";
 
 function* lexer(str) {
   // looping through string and tracking current position in string
@@ -15,7 +15,13 @@ function* lexer(str) {
       yield {
         type: "number",
         value: 7,
+        loc: {        // loc is location
+            begin: cursor,
+            end: cursor + 1,
+        }
       }
+    } else {
+        throw new Error(`unexpected character ${c} at ${cursor+1}`) // we adding 1 because we started from position 0 now we have error and we informing the user where the exact error occurs
     }
   }
 }
