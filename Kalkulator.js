@@ -35,7 +35,7 @@ for (const token of lexer(input)) {
 
 console.log("finish");
 */
-const input = "77 7";
+const input = "123456789  22  33";
 
 function* lexer(str) {
     let cursor = 0;
@@ -48,7 +48,7 @@ function* lexer(str) {
 
     function number() {
         let buffer = "";
-        while (char === '7') {
+        while (/^\d$/.test(char)) {
             buffer += char;
             next()
         }
