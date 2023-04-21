@@ -35,31 +35,46 @@ for (const token of lexer(input)) {
 
 console.log("finish");
 */
-const input = "777";
+const input = "77 7";
 
 function* lexer(str) {
     let cursor = 0;
-    let char = undefined;
+    let char = str[cursor];
+
+    function next() {
+        cursor++;
+        char = str[cursor];
+    }
 
     function number() {
-        let value = "";
-        for (; cursor <= str.length; cursor++) {
-            char = str[cursor]
-            if(char === '7') { // if character is 7 we save it to the value
-                value += char;
-            } else {
-                break;
-            }
+        let buffer = "";
+        while (char === '7') {
+            buffer += char;
+            next()
         }
      
-        if(value.length >= 1) {
+        if(buffer.length >= 1) {
             return {
                 type: 'number',
-                value,
+                value: buffer,
             }
         }
 
         return null;
+    }
+
+    function whitespace() {
+        let buffer = ""
+        while(char === " ") {
+            buffer += char;
+            next()
+        }
+        if(buffer.length >= 1) {
+            return {
+                type: "whitespace",
+                value: buffer,
+            }
+        }
     }
 
     function eof() {
@@ -74,8 +89,8 @@ function* lexer(str) {
         return null
     }
 
-    for (;; ) { // sprawdzic
-        const token = number() || eof() || null;
+    for (;; ) { // sprawdzic this is równowartość to this while(true)
+        const token = number() || whitespace() || eof(); // features are arranged by frequency of use
 
         if(token) {
             yield token;
@@ -92,7 +107,7 @@ function* lexer(str) {
 }
 
 console.log("start");
-for (const token of lexer(input)) {
+for (const token of lexer(input)) { // console.log([...lexer(input)])
     console.log(token);
   }
 console.log("finish");
